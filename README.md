@@ -1,1 +1,1 @@
-# tracardi-redshift-connector
+# Tracardi Firebase connector

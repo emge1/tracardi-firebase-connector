@@ -1,8 +1,11 @@
 from tracardi_plugin_sdk.action_runner import ActionRunner
+from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData
 from tracardi_plugin_sdk.domain.result import Result
-from tracardi_firebase_connector.model.configuration import FirebaseConnection, FirebaseAuthentication
-from tracardi.service.storage.helpers.source_reader import read_source #
+from tracardi_firebase_connector.model.configuration import FirebaseConnection, FirebaseAuthentication, \
+    PluginConfiguration
+from tracardi.service.storage.helpers.source_reader import read_source  #
 import firebase
+
 
 class FirebaseConnectorAction(ActionRunner):
 
@@ -28,6 +31,7 @@ class FirebaseConnectorAction(ActionRunner):
         result = await self.db.child(self.config.query).get()
         return Result(port="payload", value={"result": result})
 
+
 '''    async def close(self):
         if self.db:
             await self.db.close()'''
@@ -46,18 +50,18 @@ def register() -> Plugin:
             author="Marcin Gaca",
             init={
                 "authentication": {
-                  "email": None
-                  "password": None
-                    },
+                    "email": None,
+                    "password": None
+                },
                 "connection": {
-                  "apiKey": None,
-                  "authDomain": None,
-                  "databaseURL": None,
-                  "storageBucket": None,
-                  "serviceAccount": None,
-                  "query": None
-                    }
+                    "apiKey": None,
+                    "authDomain": None,
+                    "databaseURL": None,
+                    "storageBucket": None,
+                    "serviceAccount": None,
+                    "query": None
                 }
+            }
         ),
         metadata=MetaData(
             name='Firebase connector',
