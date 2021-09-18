@@ -1,0 +1,1 @@
+# tracardi-redshift-connector
