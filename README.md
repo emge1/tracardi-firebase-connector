@@ -16,7 +16,7 @@ To authenticate, you should write your email and password.
 Your Google's Firebase configuration data can be found on 
 [Firebase](https://console.firebase.google.com/) > Settings > Project Settings (here scroll to bottom) > 
 Add to web app > config. Optionally, you can add a service
-account credential to authenticate with Firebase as an admin.
+account credential (serviceAccount) to authenticate with Firebase as an admin.
 
 Query is a path to data you want to get.
 
