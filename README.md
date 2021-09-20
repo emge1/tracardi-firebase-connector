@@ -2,7 +2,7 @@
 
 This code can be run within Tracardi workflow.
 
-# Firebase connector actione
+# Firebase connector action
 
 The purpose of this plugin is to connect with Firebase and get data from
 this database.
