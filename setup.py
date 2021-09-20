@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
     name='tracardi-firebase-connector',
-    version='0.1',
+    version='0.1.0',
     description='This plugin connects to firebase.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Marcin Gaca',
-    author_email='',
+    author_email='emygeq@gmail.com',
     packages=['tracardi_firebase_connector'],
     install_requires=[
         'tracardi_plugin_sdk',
