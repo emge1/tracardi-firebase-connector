@@ -1,36 +1,36 @@
-from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData
+from tracardi_plugin_sdk.action_runner import ActionRunner
 from tracardi_plugin_sdk.domain.result import Result
-from tracardi_firebase_connector.model.configuration import FirebaseConnection, FirebaseAuthentication, \
-    PluginConfiguration
-from tracardi.service.storage.helpers.source_reader import read_source  #
-import firebase
-
+from tracardi_firebase_connector.model.configuration import FirebaseConfiguration
+from firebase import Firebase
 
 class FirebaseConnectorAction(ActionRunner):
 
-    @staticmethod
-    async def build(**kwargs) -> 'FirebaseConnectorAction':
-        plugin = FirebaseConnectorAction(**kwargs)
-        plugin.client = FirebaseAuthentication(**kwargs)
-        connection = FirebaseConnection(**kwargs)
-        plugin.db = await connection.connect()
-
-        return plugin
-
     def __init__(self, **kwargs):
-        self.config = PluginConfiguration(**kwargs)
-        self.client = None
-        self.db = None
+        self.config = FirebaseConfiguration(**kwargs)
+
+        # self.client = None
+
         if 'query' not in kwargs:
             raise ValueError("Define query, please.")
 
-        self.query = kwargs['query']
+        self.query = kwargs["query"]
 
     async def run(self, payload):
-        result = await self.db.child(self.config.query).get()
-        return Result(port="payload", value={"result": result})
+        firebase = Firebase({"apiKey": self.config.apiKey,
+                             "authDomain": self.config.authDomain,
+                             "databaseURL": self.config.databaseURL,
+                             "storageBucket": self.config.storageBucket,
+                             "serviceAccount": self.config.serviceAccount})
+        firebase_db = firebase.database()
+        auth = firebase.auth()
+        user = auth.sign_in_with_email_and_password(self.config.email, self.config.password)
 
+        print(type(self.config.query))
+        print(user['idToken'])
+        result = firebase_db.push(self.config.query, user['idToken'])
+        # result = await firebase_db.child(self.config.query).get()
+        return Result(port="payload", value={"result": result})
 
 '''    async def close(self):
         if self.db:
@@ -44,32 +44,28 @@ def register() -> Plugin:
             module='tracardi_firebase_connector.plugin',
             className='FirebaseConnectorAction',
             inputs=["payload"],
-            outputs=['result'],
-            version='0.1.0',
+            outputs=['payload'],
+            version='0.1',
             license="MIT",
             author="Marcin Gaca",
             init={
-                "authentication": {
-                    "email": None,
-                    "password": None
-                },
-                "connection": {
-                    "apiKey": None,
-                    "authDomain": None,
-                    "databaseURL": None,
-                    "storageBucket": None,
-                    "serviceAccount": None,
-                    "query": None
+                  "email": None,
+                  "password": None,
+                  "apiKey": None,
+                  "authDomain": None,
+                  "databaseURL": None,
+                  "storageBucket": None,
+                  "serviceAccount": None,
+                  "query": None,
                 }
-            }
         ),
         metadata=MetaData(
-            name='Firebase connector',
-            desc='Connects to Firebase and reads data.',
+            name='tracardi-firebase-connector',
+            desc='This plugin connects to Firebase and reads data from the database on given query.',
             type='flowNode',
             width=200,
             height=100,
-            icon='firebase',
-            group=["Connectors"]
+            icon='icon',
+            group=["General"]
         )
     )
